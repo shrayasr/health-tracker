@@ -4,529 +4,175 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        /* ========================================
-           RESET & BASE STYLES
-           ======================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 1rem;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* ========================================
-           HEADER
-           ======================================== */
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 2rem;
-            padding: 1rem;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .header p {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        /* ========================================
-           LAYOUT CONTAINERS
-           ======================================== */
-        .main-layout {
-            display: block;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h2 {
-            color: #333;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 0.5rem;
-        }
-
-        /* ========================================
-           FORM STYLES
-           ======================================== */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #555;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="date"],
-        input[type="time"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        /* BP inputs grid - responsive based on screen size */
-        .bp-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 0.75rem;
-        }
-
-        .dynamic-fields {
-            display: none;
-        }
-
-        .dynamic-fields.active {
-            display: block;
-        }
-
-        /* ========================================
-           BUTTONS
-           ======================================== */
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-            width: 100%;
-        }
-
-        .btn-primary:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-secondary {
-            background: #48bb78;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #38a169;
-        }
-
-        .btn-warning {
-            background: #ed8936;
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background: #dd6b20;
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            margin-right: 0.5rem;
-        }
-
-        .btn-muted {
-            background: #9ca3af;
-            color: white;
-        }
-
-        .btn-muted:hover {
-            background: #6b7280;
-        }
-
-        .btn-muted-action {
-            background: #d1d5db;
-            color: #4b5563;
-            padding: 0.35rem 0.75rem;
-            font-size: 0.8rem;
-        }
-
-        .btn-muted-action:hover {
-            background: #9ca3af;
-            color: white;
-        }
-
-        /* ========================================
-           TABLE STYLES
-           ======================================== */
-        .table-wrapper {
-            overflow-x: auto;
-            margin-top: 1rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        th {
-            background: #f7fafc;
-            font-weight: 600;
-            color: #555;
-            position: sticky;
-            top: 0;
-        }
-
-        tr:hover {
-            background: #f7fafc;
-        }
-
         .void-row {
             opacity: 0.5;
             text-decoration: line-through;
         }
-
-        .actions-cell {
-            white-space: nowrap;
-        }
-
-        /* ========================================
-           BADGES
-           ======================================== */
-        .void-badge {
-            background: #fc8181;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .type-badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .type-bp {
-            background: #bee3f8;
-            color: #2c5282;
-        }
-
-        .type-sugar {
-            background: #fbd38d;
-            color: #744210;
-        }
-
-        /* ========================================
-           CHARTS
-           ======================================== */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-bottom: 2rem;
-        }
-
-        /* ========================================
-           EMPTY STATE
-           ======================================== */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #999;
-        }
-
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 1rem;
-        }
-
-        /* ========================================
-           RESPONSIVE STYLES
-           ======================================== */
-
-        /* Mobile screens (< 768px) */
-        @media (max-width: 767px) {
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .card {
-                padding: 1rem;
-            }
-
-            .bp-inputs {
-                grid-template-columns: 1fr;
-            }
-
-            table {
-                font-size: 0.8rem;
-            }
-
-            th, td {
-                padding: 0.5rem;
-            }
-
-            .btn-small {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.75rem;
-            }
-
-            .btn-muted-action {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.7rem;
-            }
-
-            .chart-container {
-                height: 250px;
-            }
-        }
-
-        /* Tablet screens (768px - 1023px) */
-        @media (min-width: 768px) and (max-width: 1023px) {
-            .bp-inputs {
-                grid-template-columns: 1fr 1fr 1fr;
-            }
-        }
-
-        /* Desktop/Laptop screens (>= 1024px) - SPLIT LAYOUT */
-        @media (min-width: 1024px) {
-            .main-layout {
-                display: grid;
-                grid-template-columns: 30% 70%;
-                gap: 1.5rem;
-                align-items: start;
-            }
-
-            .form-card {
-                position: sticky;
-                top: 1rem;
-                margin-bottom: 0;
-            }
-
-            .history-card {
-                margin-bottom: 0;
-            }
-
-            /* BP inputs stack vertically in narrow sidebar */
-            .bp-inputs {
-                grid-template-columns: 1fr;
-            }
-
-            /* Larger charts in the wider history section */
-            .chart-container {
-                height: 350px;
-            }
-        }
-
-        /* Extra large screens (>= 1440px) */
-        @media (min-width: 1440px) {
-            .container {
-                max-width: 1600px;
-            }
-
-            .chart-container {
-                height: 400px;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>💊 Health Tracker</h1>
-            <p>Track your blood pressure and sugar levels</p>
+    <div class="container-fluid py-4">
+        <div class="text-center text-white mb-4">
+            <h1 class="display-4">💊 Health Tracker</h1>
+            <p class="lead">Track your blood pressure and sugar levels</p>
         </div>
 
-        <!-- Main Layout Container -->
-        <div class="main-layout">
+        <div class="row g-4">
             <!-- Data Entry Form -->
-            <div class="card form-card">
-                <h2>📝 Record New Measurement</h2>
-            <form id="healthForm">
-                <div class="form-group">
-                    <label for="personName">Person Name *</label>
-                    <input type="text" id="personName" list="namesList" placeholder="Enter name" required autocomplete="off">
-                    <datalist id="namesList">
-                        <!-- Names will be populated here -->
-                    </datalist>
-                </div>
+            <div class="col-lg-4">
+                <div class="card shadow sticky-lg-top" style="top: 1rem;">
+                    <div class="card-header">
+                        <h5 class="mb-0">📝 Record New Measurement</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="healthForm">
+                            <div class="mb-3">
+                                <label for="personName" class="form-label">Person Name *</label>
+                                <input type="text" class="form-control" id="personName" list="namesList" placeholder="Enter name" required autocomplete="off">
+                                <datalist id="namesList"></datalist>
+                            </div>
 
-                <div class="form-group">
-                    <label for="measurementType">Measurement Type *</label>
-                    <select id="measurementType" required>
-                        <option value="">-- Select Type --</option>
-                        <option value="bp">Blood Pressure (BP)</option>
-                        <option value="sugar">Sugar Level</option>
-                    </select>
-                </div>
+                            <div class="mb-3">
+                                <label for="measurementType" class="form-label">Measurement Type *</label>
+                                <select class="form-select" id="measurementType" required>
+                                    <option value="">-- Select Type --</option>
+                                    <option value="bp">Blood Pressure (BP)</option>
+                                    <option value="sugar">Sugar Level</option>
+                                </select>
+                            </div>
 
-                <!-- BP Fields -->
-                <div id="bpFields" class="dynamic-fields">
-                    <div class="form-group">
-                        <label>Blood Pressure & Pulse *</label>
-                        <div class="bp-inputs">
-                            <div>
-                                <input type="number" id="systolic" placeholder="Systolic" min="0" max="300">
-                                <small style="color: #999;">Top number</small>
+                            <!-- BP Fields -->
+                            <div id="bpFields" class="d-none">
+                                <div class="mb-3">
+                                    <label class="form-label">Blood Pressure & Pulse *</label>
+                                    <div class="row g-2">
+                                        <div class="col-md-4">
+                                            <input type="number" class="form-control" id="systolic" placeholder="Systolic" min="0" max="300">
+                                            <small class="text-muted">Top number</small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="number" class="form-control" id="diastolic" placeholder="Diastolic" min="0" max="200">
+                                            <small class="text-muted">Bottom number</small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="number" class="form-control" id="pulse" placeholder="Pulse" min="0" max="250">
+                                            <small class="text-muted">BPM</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <input type="number" id="diastolic" placeholder="Diastolic" min="0" max="200">
-                                <small style="color: #999;">Bottom number</small>
+
+                            <!-- Sugar Fields -->
+                            <div id="sugarFields" class="d-none">
+                                <div class="mb-3">
+                                    <label for="sugarLevel" class="form-label">Sugar Level (mg/dL) *</label>
+                                    <input type="number" class="form-control" id="sugarLevel" placeholder="Enter sugar level" min="0" max="600">
+                                </div>
                             </div>
-                            <div>
-                                <input type="number" id="pulse" placeholder="Pulse" min="0" max="250">
-                                <small style="color: #999;">BPM</small>
+
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Date *</label>
+                                <input type="date" class="form-control" id="date" required>
                             </div>
-                        </div>
+
+                            <div class="mb-3">
+                                <label for="time" class="form-label">Time *</label>
+                                <input type="time" class="form-control" id="time" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="remarks" class="form-label">Remarks</label>
+                                <textarea class="form-control" id="remarks" rows="3" placeholder="Any additional notes..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100" id="submitBtn">Save Record</button>
+                        </form>
                     </div>
                 </div>
-
-                <!-- Sugar Fields -->
-                <div id="sugarFields" class="dynamic-fields">
-                    <div class="form-group">
-                        <label for="sugarLevel">Sugar Level (mg/dL) *</label>
-                        <input type="number" id="sugarLevel" placeholder="Enter sugar level" min="0" max="600">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="date">Date *</label>
-                    <input type="date" id="date" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="time">Time *</label>
-                    <input type="time" id="time" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="remarks">Remarks</label>
-                    <textarea id="remarks" placeholder="Any additional notes..."></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary" id="submitBtn">Save Record</button>
-            </form>
-        </div>
+            </div>
 
             <!-- History View -->
-            <div class="card history-card">
-                <h2>📊 Health History</h2>
-
-            <div style="text-align: right; margin-bottom: 1rem;">
-                <button class="btn btn-muted btn-small" onclick="exportToCSV()">💾 Export CSV</button>
-            </div>
-
-            <!-- Charts Section -->
-            <div style="margin-bottom: 2rem;">
-                <div class="chart-container">
-                    <canvas id="bpChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <canvas id="sugarChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Table Section -->
-            <div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-                    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <label for="recordLimit" style="margin: 0; font-size: 0.9rem;">Show:</label>
-                            <select id="recordLimit" onchange="updateRecordLimit()" style="width: auto; padding: 0.5rem;">
-                                <option value="10">10</option>
-                                <option value="20" selected>20</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <span style="font-size: 0.9rem; color: #666;">records</span>
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">📊 Health History</h5>
+                        <button class="btn btn-light btn-sm" onclick="exportToCSV()">💾 Export CSV</button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Charts Section -->
+                        <div class="mb-4">
+                            <div class="mb-4" style="height: 300px;">
+                                <canvas id="bpChart"></canvas>
+                            </div>
+                            <div class="mb-4" style="height: 300px;">
+                                <canvas id="sugarChart"></canvas>
+                            </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <label for="metricFilter" style="margin: 0; font-size: 0.9rem;">Filter:</label>
-                            <select id="metricFilter" onchange="updateMetricFilter()" style="width: auto; padding: 0.5rem;">
-                                <option value="all">All Types</option>
-                                <option value="bp">BP Only</option>
-                                <option value="sugar">Sugar Only</option>
-                            </select>
+
+                        <!-- Table Section -->
+                        <div>
+                            <div class="row g-3 mb-3 align-items-center">
+                                <div class="col-auto">
+                                    <label for="recordLimit" class="col-form-label">Show:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <select id="recordLimit" class="form-select form-select-sm" onchange="updateRecordLimit()">
+                                        <option value="10">10</option>
+                                        <option value="20" selected>20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="col-form-label">records</span>
+                                </div>
+                                <div class="col-auto">
+                                    <label for="metricFilter" class="col-form-label">Filter:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <select id="metricFilter" class="form-select form-select-sm" onchange="updateMetricFilter()">
+                                        <option value="all">All Types</option>
+                                        <option value="bp">BP Only</option>
+                                        <option value="sugar">Sugar Only</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <div id="recordCount" class="text-muted text-end"></div>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped" id="recordsTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Person</th>
+                                            <th>Date</th>
+                                            <th>Time</th>
+                                            <th>Type</th>
+                                            <th>Values</th>
+                                            <th>Remarks</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableBody"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <div id="recordCount" style="font-size: 0.9rem; color: #666;"></div>
-                </div>
-
-                <div class="table-wrapper">
-                    <table id="recordsTable">
-                        <thead>
-                            <tr>
-                                <th>Person</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Type</th>
-                                <th>Values</th>
-                                <th>Remarks</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Records will be inserted here -->
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
-        </div> <!-- End main-layout -->
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Global state
         let records = [];
@@ -555,22 +201,22 @@
                 const sugarFields = document.getElementById('sugarFields');
 
                 if (e.target.value === 'bp') {
-                    bpFields.classList.add('active');
-                    sugarFields.classList.remove('active');
+                    bpFields.classList.remove('d-none');
+                    sugarFields.classList.add('d-none');
                     document.getElementById('systolic').required = true;
                     document.getElementById('diastolic').required = true;
                     document.getElementById('pulse').required = true;
                     document.getElementById('sugarLevel').required = false;
                 } else if (e.target.value === 'sugar') {
-                    sugarFields.classList.add('active');
-                    bpFields.classList.remove('active');
+                    sugarFields.classList.remove('d-none');
+                    bpFields.classList.add('d-none');
                     document.getElementById('sugarLevel').required = true;
                     document.getElementById('systolic').required = false;
                     document.getElementById('diastolic').required = false;
                     document.getElementById('pulse').required = false;
                 } else {
-                    bpFields.classList.remove('active');
-                    sugarFields.classList.remove('active');
+                    bpFields.classList.add('d-none');
+                    sugarFields.classList.add('d-none');
                 }
             });
 
@@ -650,8 +296,8 @@
 
         function resetForm() {
             document.getElementById('healthForm').reset();
-            document.getElementById('bpFields').classList.remove('active');
-            document.getElementById('sugarFields').classList.remove('active');
+            document.getElementById('bpFields').classList.add('d-none');
+            document.getElementById('sugarFields').classList.add('d-none');
             setDefaultDateTime();
             editingId = null;
             document.getElementById('submitBtn').textContent = 'Save Record';
@@ -702,9 +348,9 @@
             if (records.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="empty-state">
+                        <td colspan="8" class="text-center py-5 text-muted">
                             <div>
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="64" height="64" class="mx-auto mb-3">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                                 <p>No records yet. Start by adding your first measurement!</p>
@@ -749,7 +395,7 @@
                     valuesDisplay = `${record.values.sugar} mg/dL`;
                 }
 
-                const typeClass = record.type === 'bp' ? 'type-bp' : 'type-sugar';
+                const typeBadgeClass = record.type === 'bp' ? 'bg-info' : 'bg-warning';
                 const typeLabel = record.type === 'bp' ? 'BP' : 'Sugar';
 
                 return `
@@ -757,13 +403,13 @@
                         <td>${record.personName || '-'}</td>
                         <td>${record.date}</td>
                         <td>${record.time}</td>
-                        <td><span class="type-badge ${typeClass}">${typeLabel}</span></td>
+                        <td><span class="badge ${typeBadgeClass}">${typeLabel}</span></td>
                         <td>${valuesDisplay}</td>
                         <td>${record.remarks || '-'}</td>
-                        <td>${record.isVoid ? '<span class="void-badge">VOID</span>' : '-'}</td>
-                        <td class="actions-cell">
-                            <button class="btn btn-secondary btn-small" onclick="editRecord(${record.id})">Edit</button>
-                            <button class="btn btn-muted-action" onclick="voidRecord(${record.id})">
+                        <td>${record.isVoid ? '<span class="badge bg-danger">VOID</span>' : '-'}</td>
+                        <td class="text-nowrap">
+                            <button class="btn btn-success btn-sm" onclick="editRecord(${record.id})">Edit</button>
+                            <button class="btn btn-secondary btn-sm" onclick="voidRecord(${record.id})">
                                 ${record.isVoid ? 'Unvoid' : 'Void'}
                             </button>
                         </td>
@@ -975,7 +621,7 @@
                     record.type === 'bp' ? record.values.diastolic : '',
                     record.type === 'bp' ? record.values.pulse : '',
                     record.type === 'sugar' ? record.values.sugar : '',
-                    `"${(record.remarks || '').replace(/"/g, '""')}"`, // Escape quotes in remarks
+                    `"${(record.remarks || '').replace(/"/g, '""')}"`,
                     record.isVoid ? 'YES' : 'NO'
                 ];
                 csv += row.join(',') + '\n';
